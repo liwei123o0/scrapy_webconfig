@@ -14,6 +14,15 @@
 import MySQLdb
 import MySQLdb.cursors
 import logging
+import platform
+import sys
+
+reload(sys)
+if platform.system().lower() in "windows":
+    sys.setdefaultencoding('gb18030')
+else:
+    # platform.system().lower() in "linux"
+    sys.setdefaultencoding('utf-8')
 
 
 # 获取所有企业名称
@@ -43,13 +52,14 @@ def loadnameone():
 # 加载规则配置文件
 def fileconfig(name_spider):
     try:
-        conn = MySQLdb.connect(host="192.168.10.156", port=3306, user="root", passwd="root", charset="utf8",
+        conn = MySQLdb.connect(host=u"192.168.10.156", port=3306, user=u"root", passwd=u"root", charset=u"utf8",
                                cursorclass=MySQLdb.cursors.DictCursor)
         cur = conn.cursor()
-        cur.execute("SELECT * FROM DataCollect.net_spider WHERE spider_name='{}'".format(name_spider))
+        cur.execute(u"SELECT * FROM DataCollect.net_spider WHERE spider_name='{}'".format(name_spider))
         try:
             keywords = cur.fetchall()[0]
         except:
+            print u"爬虫名:{}".format(name_spider)
             raise logging.error(u"爬虫名:{} 配置信息未找到!".format(name_spider))
     except MySQLdb.Error, e:
         cur.close()

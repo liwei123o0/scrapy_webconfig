@@ -36,6 +36,7 @@ class loadSpider(CrawlSpider):
         if name_spider == None or spider_jobid == None:
             raise logging.error(u"name_spider或spider_jobid 不能为空!!!")
         self.conf = fileconfig(name_spider)
+        print "conf:%s" % self.conf
         self.allowed_domains = [self.conf.get("allowed_domains", "")]
 
         self.debug = True
@@ -50,8 +51,8 @@ class loadSpider(CrawlSpider):
         # 判断是否翻页规则解析 (方法一)
         rules = json.loads(self.conf.get("rules"))
         if rules.get("rules", "") == "":
-                logging.error(u"规则解析未得到!!!")
-                return
+            logging.error(u"规则解析未得到!!!")
+            return
         keys = len(rules.get("rules").keys())
         if keys == 1:
             print rules.get("rules_listxpath", "")
