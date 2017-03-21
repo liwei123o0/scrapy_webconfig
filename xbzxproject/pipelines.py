@@ -31,7 +31,7 @@ class XbzxprojectPipeline(object):
         self.socket = ServerZmq()
         self.socket.ZmqConnect(u"tcp://127.0.0.1:5050")
         logging.info(u"mysql连接成功!")
-        logging.info(u"zmq启动成功!!")
+        logging.info(u"zmq启动成功!")
         if spider.proxy:
             logging.info(u"代理已启动...")
         else:
