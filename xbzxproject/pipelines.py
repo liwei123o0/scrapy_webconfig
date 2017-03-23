@@ -18,7 +18,6 @@ from xbzxproject.utils.zmqserver import ServerZmq
 import re
 import pymongo
 
-
 # mysql入库Pipeline
 class XbzxprojectPipeline(object):
     # 开启爬虫初始化工作
