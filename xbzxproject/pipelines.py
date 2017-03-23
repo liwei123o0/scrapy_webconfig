@@ -15,8 +15,8 @@ import MySQLdb
 import logging
 from xbzxproject.utils import date_parse
 from xbzxproject.utils.zmqserver import ServerZmq
-import re
-import pymongo
+import re, pymongo
+
 
 # mysql入库Pipeline
 class XbzxprojectPipeline(object):
@@ -25,7 +25,7 @@ class XbzxprojectPipeline(object):
         self.cout = 1
         self.conn = MySQLdb.connect(host=u"192.168.10.156", port=3306, user=u"root", passwd=u"root", charset=u"utf8")
         self.cur = self.conn.cursor()
-        self.client = pymongo.MongoClient(u'localhost', 27017)
+        self.client = pymongo.MongoClient('localhost', 27017)
         self.db = self.client.user.spidertest
         # zmq消息队列
         self.socket = ServerZmq()
@@ -68,7 +68,10 @@ class XbzxprojectPipeline(object):
         else:
             try:
                 self.cur.execute(
-                    u"SELECT  name FROM DataCollect.net_gendbtable WHERE  id='{}'".format(spider.tablename))
+                    u"SELECT  id FROM DataCollect.net_spider WHERE  spider_name='{}'".format(spider.name_spider))
+                Net_Spider_Id = self.cur.fetchall()[0][0]
+                self.cur.execute(
+                    u"SELECT  name FROM DataCollect.net_gendbtable WHERE  net_spider_id='{}'".format(Net_Spider_Id))
                 TableName = self.cur.fetchall()
                 if TableName:
                     TableName = "net_" + TableName[0][0]
@@ -95,5 +98,5 @@ class XbzxprojectPipeline(object):
     def close_spider(self, spider):
         self.cur.close()
         self.conn.close()
-        # self.db.close()
+        self.client.close()
         logging.info(u"mysql关闭成功")

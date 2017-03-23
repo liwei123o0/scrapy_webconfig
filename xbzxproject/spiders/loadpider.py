@@ -39,7 +39,7 @@ class loadSpider(CrawlSpider):
         print "conf:%s" % self.conf
         self.allowed_domains = [self.conf.get("allowed_domains", "")]
 
-        self.debug = True
+        self.debug = False
         if self.conf.get("proxy").lower() in "false":
             self.proxy = False
         else:
