@@ -58,7 +58,7 @@ class StatsPoster(object):
             for key in dic.keys():
                 # 判断该字段是否存在,不存在则创建该字段
                 key = key.replace(u"/", u"_")
-                self.cur.execute(u"describe DataCollect.net_spider_logs {};".format(key))
+                self.cur.execute(u"describe net_spider_logs {};".format(key))
                 result = len(self.cur.fetchall())
                 if result == 0:
                     self.cur.execute(u"ALTER TABLE net_spider_logs ADD COLUMN {} varchar(100); ".format(key))
