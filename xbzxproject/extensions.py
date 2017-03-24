@@ -21,7 +21,7 @@ class StatsPoster(object):
         self.crawler = crawler
         self.stats = crawler.stats
         # 链接数据库
-        self.conn = MySQLdb.connect(host=u'localhost', user=u'root', passwd=u'root', db=u'test', port=3306,
+        self.conn = MySQLdb.connect(host=u'192.168.10.156', user=u'root', passwd=u'root', db=u'DataCollect', port=3306,
                                     charset=u"utf8")
         self.cur = self.conn.cursor()
         self.COLstr = u''  # 列的字段
@@ -54,23 +54,23 @@ class StatsPoster(object):
             self.ROWstr = (self.ROWstr + u'"%s"' + u',') % (dic[key])
         # 判断表是否存在，存在执行try，不存在执行except新建表，再insert
         try:
-            self.cur.execute(u"SELECT * FROM  spiderlogs")
+            self.cur.execute(u"SELECT * FROM  net_spider_logs")
             for key in dic.keys():
                 # 判断该字段是否存在,不存在则创建该字段
                 key = key.replace(u"/", u"_")
-                self.cur.execute(u"describe test.spiderlogs {};".format(key))
+                self.cur.execute(u"describe DataCollect.net_spider_logs {};".format(key))
                 result = len(self.cur.fetchall())
                 if result == 0:
-                    self.cur.execute(u"ALTER TABLE spiderlogs ADD COLUMN {} varchar(100); ".format(key))
+                    self.cur.execute(u"ALTER TABLE net_spider_logs ADD COLUMN {} varchar(100); ".format(key))
             self.cur.execute(
-                u"INSERT INTO spiderlogs (%s)VALUES (%s)" % (
+                u"INSERT INTO net_spider_logs (%s)VALUES (%s)" % (
                     str(dic.keys()).replace(u"/", u"_").replace(u"[", u"").replace(u"]", u"").replace(u"'", u""),
                     self.ROWstr[:-1]))
 
         except MySQLdb.Error, e:
-            self.cur.execute(u"CREATE TABLE spiderlogs (%s)" % (self.COLstr[:-1]))
+            self.cur.execute(u"CREATE TABLE net_spider_logs (%s)" % (self.COLstr[:-1]))
             self.cur.execute(
-                u"INSERT INTO spiderlogs (%s)VALUES (%s)" % (
+                u"INSERT INTO net_spider_logs (%s)VALUES (%s)" % (
                     str(dic.keys()).replace(u"/", u"_").replace(u"[", u"").replace(u"]", u"").replace(u"'", u""),
                     self.ROWstr[:-1]))
         self.conn.commit()
