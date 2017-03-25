@@ -1,0 +1,14 @@
+{
+  "mysql": {
+    "host": "192.168.10.156",
+    "port": "3306"
+  },
+  "scrapy": {
+    "name": "testproject",
+    "path": "E:\\scrapy_webconfig"
+  },
+  "scrapyd": {
+    "host": "192.168.3.236",
+    "port": "6800"
+  }
+}
