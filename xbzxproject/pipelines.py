@@ -30,6 +30,10 @@ class XbzxprojectPipeline(object):
                                     user=self.conf.get("user", "root"), passwd=self.conf.get("passwd", "root"),
                                     charset=u"utf8")
         self.cur = self.conn.cursor()
+        # debug 模式
+        if spider.debug:
+            self.cur.execute("TRUNCATE {}.net_spider_temp".format(self.conf.get("databases")))
+            self.conn.commit()
         # MongoDB 入库
         # self.client = pymongo.MongoClient(u'localhost', 27017)
         # self.db = self.client.user.spidertest
