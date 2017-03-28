@@ -16,6 +16,7 @@ import MySQLdb.cursors
 import logging
 import platform
 import sys
+import json
 
 reload(sys)
 if platform.system().lower() in "windows":
@@ -51,11 +52,13 @@ def loadnameone():
 
 # 加载规则配置文件
 def fileconfig(name_spider):
+    conf = loadscrapyconf()['mysql']
     try:
-        conn = MySQLdb.connect(host=u"192.168.10.156", port=3306, user=u"root", passwd=u"root", charset=u"utf8",
-                               cursorclass=MySQLdb.cursors.DictCursor)
+        conn = MySQLdb.connect(host=conf.get("host", "localhost"), port=conf.get("port", 3306),
+                               user=conf.get("user", "root"), passwd=conf.get("passwd", "root"),
+                               charset=u"utf8", cursorclass=MySQLdb.cursors.DictCursor)
         cur = conn.cursor()
-        cur.execute(u"SELECT * FROM DataCollect.net_spider WHERE spider_name='{}'".format(name_spider))
+        cur.execute(u"SELECT * FROM {}.net_spider WHERE spider_name='{}'".format(conf.get("databases"), name_spider))
         try:
             keywords = cur.fetchall()[0]
         except:
@@ -84,15 +87,19 @@ def loaditems():
 
 # 读取自动建库字段
 def loadMySQL(spider_type):
-    conn = MySQLdb.connect(host="192.168.10.156", port=3306, user="root", passwd="root", charset="utf8")
+    conf = loadscrapyconf()['mysql']
+    conn = MySQLdb.connect(host=conf.get("host", "localhost"), port=conf.get("port", 3306),
+                           user=conf.get("user", "root"), passwd=conf.get("passwd", "root"), charset="utf8")
     cur = conn.cursor()
-    cur.execute(u"SELECT id FROM DataCollect.net_gendbtable WHERE name = '{}'".format(spider_type))
+    cur.execute(u"SELECT id FROM {}.net_gendbtable WHERE name = '{}'".format(conf.get("databases"), spider_type))
     try:
         key = cur.fetchall()[0][0]
     except:
         raise logging.error(u"spider_type:{} 未找到,请检查爬虫类型!".format(spider_type))
     try:
-        cur.execute(u"SELECT name FROM DataCollect.net_gendbtable_column WHERE gen_gendbtable_id = '{}'".format(key))
+        cur.execute(
+            u"SELECT name FROM {}.net_gendbtable_column WHERE gen_gendbtable_id = '{}'".format(conf.get("databases"),
+                                                                                               key))
     except MySQLdb.Error, e:
         raise logging.error(u"Mysql Error %d: %s" % (e.args[0], e.args[1]))
     key = cur.fetchall()
@@ -101,6 +108,11 @@ def loadMySQL(spider_type):
     return key
 
 
-if __name__ == "__main__":
+# 加载初始化配置
+def loadscrapyconf():
+    from xbzxproject.settings import BASECONFIG
+    return BASECONFIG
 
+
+if __name__ == "__main__":
     pass

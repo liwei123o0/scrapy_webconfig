@@ -25,7 +25,7 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20100101 Firef
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
-#scrapy-redis
+# scrapy-redis
 # Enables scheduling storing requests queue in redis.
 # SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
@@ -79,7 +79,7 @@ SPLASH_URL = 'http://192.168.10.26:5000/'
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
 EXTENSIONS = {
-   'scrapy.extensions.telnet.TelnetConsole': None,
+    'scrapy.extensions.telnet.TelnetConsole': None,
     'xbzxproject.extensions.StatsPoster': 999,
 }
 
@@ -110,3 +110,23 @@ ITEM_PIPELINES = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+
+# baseconfig
+BASECONFIG = {
+    "mysql": {
+        "databases": "DataCollect",
+        "host": "192.168.10.156",
+        "port": 3306,
+        "user": "root",
+        "passwd": "root"
+    },
+    "scrapy": {
+        "name": "testproject",
+        "path": "E:\\scrapy_webconfig"
+    },
+    "scrapyd": {
+        "host": "192.168.3.236",
+        "port": "6800"
+    }
+}

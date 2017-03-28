@@ -1,7 +1,10 @@
 {
   "mysql": {
+    "databases": "DataCollect",
     "host": "192.168.10.156",
-    "port": "3306"
+    "port": 3306,
+    "user": "root",
+    "passwd": "root"
   },
   "scrapy": {
     "name": "testproject",
