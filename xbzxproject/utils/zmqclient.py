@@ -12,7 +12,7 @@
 """
 
 import zmq
-
+import json
 
 # 接受zmq客户端
 class ClientZMQ(object):
@@ -26,7 +26,8 @@ class ClientZMQ(object):
 
     def ZmqClientMessage(self):
         while 1:
-            print self.socket.recv()
+            data = json.loads(self.socket.recv())
+            print data.get(u"8aaf697abf93464981dff1e7451898db")
 
 if __name__ == "__main__":
     # 客户端接受例子

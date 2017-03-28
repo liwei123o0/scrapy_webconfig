@@ -25,9 +25,10 @@ class loadSpider(CrawlSpider):
 
     # 加载规则配置文件
     # 获取额外参数
-    def __init__(self, spider_jobid=None, name_spider=None, *args, **kwargs):
+    def __init__(self, spider_jobid=None, name_spider=None, debug=False, *args, **kwargs):
         self.spider_jobid = spider_jobid
         self.name_spider = name_spider
+        self.debug = debug
         self.loadconf(name_spider, spider_jobid)
         super(loadSpider, self).__init__(*args, **kwargs)
 
@@ -36,10 +37,8 @@ class loadSpider(CrawlSpider):
         if name_spider == None or spider_jobid == None:
             raise logging.error(u"name_spider或spider_jobid 不能为空!!!")
         self.conf = fileconfig(name_spider)
-        print "conf:%s" % self.conf
         self.allowed_domains = [self.conf.get("allowed_domains", "")]
 
-        self.debug = False
         if self.conf.get("proxy").lower() in "false":
             self.proxy = False
         else:

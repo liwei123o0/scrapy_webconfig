@@ -15,7 +15,8 @@ import MySQLdb
 import logging
 from xbzxproject.utils import date_parse
 from xbzxproject.utils.zmqserver import ServerZmq
-import re, pymongo
+import re, pymongo, json
+from scrapy.exceptions import CloseSpider
 
 
 # mysql入库Pipeline
@@ -25,7 +26,7 @@ class XbzxprojectPipeline(object):
         self.cout = 1
         self.conn = MySQLdb.connect(host=u"192.168.10.156", port=3306, user=u"root", passwd=u"root", charset=u"utf8")
         self.cur = self.conn.cursor()
-        self.client = pymongo.MongoClient('localhost', 27017)
+        self.client = pymongo.MongoClient(u'localhost', 27017)
         self.db = self.client.user.spidertest
         # zmq消息队列
         self.socket = ServerZmq()
@@ -64,7 +65,31 @@ class XbzxprojectPipeline(object):
             values.append(v)
         # debug为true时,数据入库!
         if spider.debug:
-            pass
+            self.cur.execute(
+                u"SELECT id FROM DataCollect.net_spider WHERE spider_name='{}';".format(spider.name_spider))
+            gen_gendbtable_id = self.cur.fetchall()[0][0]
+            self.cur.execute(
+                u"SELECT id FROM  DataCollect.net_gendbtable WHERE net_spider_id ='{}';".format(gen_gendbtable_id))
+            net_spider_id = self.cur.fetchall()[0][0]
+            self.cur.execute(
+                u"SELECT name,comments FROM  DataCollect.net_gendbtable_column WHERE gen_gendbtable_id='{}';".format(
+                    net_spider_id))
+            datanames = dict(self.cur.fetchall())
+            keys = item.keys()
+            data = "'url':'%s'," % item['url']
+            for key in keys:
+                comments = datanames.get(key)
+                if comments is None:
+                    continue
+                data += "'%s':'%s'," % (comments, item[key])
+            data = "{" + data + "}"
+            try:
+                self.cur.execute(
+                    u'INSERT INTO DataCollect.net_spider_temp(name_spider,spider_data) VALUES("%s","%s");' % (
+                        spider.name_spider, str(data)))
+                self.conn.commit()
+            except MySQLdb.Error, e:
+                logging.error(u"Mysql Error %d: %s" % (e.args[0], e.args[1]))
         else:
             try:
                 self.cur.execute(
@@ -81,10 +106,6 @@ class XbzxprojectPipeline(object):
                                                                              u','.join([u'%s'] * len(fields)))
                         , values)
                     self.conn.commit()
-                    try:
-                        self.db.update({"_id": item['url']}, item, True)
-                    except Exception as e:
-                        logging.error(u"MongoDB 写入数据失败,失败原因:%s" % e)
                     logging.info(u"数据插入成功!")
                 else:
                     logging.error(u"未对该爬虫创建数据库表!")

@@ -27,8 +27,12 @@ class ServerZmq(object):
     def ZmqServerSend(self, msg):
         self.socket.send_unicode(msg)
 
+
 if __name__ == "__main__":
     # 服务端发送例子
     msg = ServerZmq()
     msg.ZmqConnect(tcp=u"tcp://127.0.0.1:5050")
-    msg.ZmqServerSend(msg=u"test")
+    import time
+    while 1:
+        time.sleep(0.5)
+        msg.ZmqServerSend(msg=u'{"李伟": 23, "linan": 25}')
