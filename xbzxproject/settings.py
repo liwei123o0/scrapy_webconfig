@@ -112,7 +112,7 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 
-# baseconfig
+# BASECONFIG 爬虫基本信息
 BASECONFIG = {
     "mysql": {
         "databases": "DataCollect",
@@ -127,6 +127,6 @@ BASECONFIG = {
     },
     "scrapyd": {
         "host": "192.168.3.236",
-        "port": "6800"
+        "port": 6800
     }
 }
