@@ -81,7 +81,7 @@ class XbzxprojectPipeline(object):
                 comments = datanames.get(key)
                 if comments is None:
                     continue
-                data += "'%s':'%s'," % (comments, item[key])
+                data += "'%s':'%s'," % (comments, item[key].replace('"', ""))
             data = "{" + data + "}"
             try:
                 self.cur.execute(
