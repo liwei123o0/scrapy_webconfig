@@ -48,6 +48,7 @@ class StatsPoster(object):
         self.stats.set_value('finish_time', datetime.datetime.now(), spider=spider)
         self.stats.set_value('name_spider', spider.name_spider)
         self.stats.set_value('spider_jobid', spider.spider_jobid)
+
         dic = self.stats.get_stats()
         for key in dic.keys():
             self.COLstr = self.COLstr + key.replace(u"/", u"_") + self.ColumnStyle + u','
