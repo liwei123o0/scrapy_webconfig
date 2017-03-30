@@ -47,10 +47,6 @@ class loadSpider(CrawlSpider):
         self.tablename = spider_jobid
 
         self.start_urls = [self.conf.get("start_urls", "").replace("\r\n","")]
-        print "##################################"
-        print self.conf.get("start_urls", "")
-        print self.start_urls
-        print "##################################"
         # 判断是否翻页规则解析 (方法一)
         rules = json.loads(self.conf.get("rules"))
         if rules.get("rules", "") == "":

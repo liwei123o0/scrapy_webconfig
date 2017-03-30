@@ -28,11 +28,11 @@ class XbzxprojectPipeline(object):
         self.cout = 1
         self.conn = MySQLdb.connect(host=self.conf.get("host", "localhost"), port=self.conf.get("port", 3306),
                                     user=self.conf.get("user", "root"), passwd=self.conf.get("passwd", "root"),
-                                    charset=u"utf8")
+                                    db=self.conf.get("databases"), charset=u"utf8")
         self.cur = self.conn.cursor()
         # debug 模式
         if spider.debug:
-            self.cur.execute("TRUNCATE {}.net_spider_temp".format(self.conf.get("databases")))
+            self.cur.execute("TRUNCATE net_spider_temp")
             self.conn.commit()
         # MongoDB 入库
         # self.client = pymongo.MongoClient(u'localhost', 27017)
@@ -76,16 +76,15 @@ class XbzxprojectPipeline(object):
         # debug为true时,数据入库!
         if spider.debug:
             self.cur.execute(
-                u"SELECT gen_gendbtable_id FROM {}.net_spider WHERE spider_name='{}';".format(
-                    self.conf.get("databases"), spider.name_spider))
+                u"SELECT gen_gendbtable_id FROM net_spider WHERE spider_name='{}';".format(spider.name_spider))
             gen_gendbtable_id = self.cur.fetchall()[0][0]
             self.cur.execute(
-                u"SELECT name,comments FROM  {}.net_gendbtable_column WHERE gen_gendbtable_id='{}';".format(
-                    self.conf.get("databases"), gen_gendbtable_id))
+                u"SELECT name,comments FROM  net_gendbtable_column WHERE gen_gendbtable_id='{}';".format(
+                    gen_gendbtable_id))
             datanames = dict(self.cur.fetchall())
             keys = item.keys()
-            data = '"url":"%s",' % item['url']
             kcout = 0
+            data = ''
             for key in keys:
                 kcout += 1
                 comments = datanames.get(key)
@@ -98,9 +97,10 @@ class XbzxprojectPipeline(object):
             data = "{" + data + "}"
             try:
                 self.cur.execute(
-                # print(
-                    u"INSERT INTO %s.net_spider_temp(name_spider,spider_data) VALUES('%s','%s');" % (
-                        self.conf.get("databases"), spider.name_spider, str(data)))
+                    # print(
+                    u"INSERT INTO net_spider_temp(url,name_spider,spider_data) VALUES('%s','%s','%s');" % (item['url'],
+                                                                                                           spider.name_spider,
+                                                                                                           str(data)))
                 self.conn.commit()
             except MySQLdb.Error, e:
                 logging.error(u"Mysql Error %d: %s" % (e.args[0], e.args[1]))
@@ -108,16 +108,16 @@ class XbzxprojectPipeline(object):
             try:
                 # 通过爬虫名称找表明
                 self.cur.execute(
-                    u"SELECT  tablename FROM {}.net_spider WHERE  spider_name='{}'".format(self.conf.get("databases"),
-                                                                                           spider.name_spider))
+                    u"SELECT  tablename FROM net_spider WHERE  spider_name='{}'".format(
+                        spider.name_spider))
                 TableName = self.cur.fetchall()
                 if TableName:
                     TableName = TableName[0][0]
                     # 根据 item 字段插入数据
                     self.cur.execute(
-                        u"INSERT INTO {}.{}({}) VALUES({});".format(self.conf.get("databases"), TableName,
-                                                                    u",".join(fields), u','.join([u'%s'] * len(fields)))
-                        , values)
+                        u"INSERT INTO {}({}) VALUES({});".format(TableName,
+                                                                 u",".join(fields), u','.join([u'%s'] * len(fields))),
+                        values)
                     self.conn.commit()
                     logging.info(u"数据插入成功!")
                 else:

@@ -113,6 +113,14 @@ ITEM_PIPELINES = {
 
 
 # BASECONFIG 爬虫基本信息
+import platform
+import psutil
+
+if platform.system().lower() in "windows":
+    address = psutil.net_if_addrs().get("\xd2\xd4\xcc\xab\xcd\xf8")[1].__dict__.get("address", "")
+elif platform.system().lower() in "linux":
+    address = psutil.net_if_addrs().get("eth0")[0].__dict__.get("address", "")
+
 BASECONFIG = {
     "mysql": {
         "databases": "DataCollect",
@@ -122,11 +130,11 @@ BASECONFIG = {
         "passwd": "root"
     },
     "scrapy": {
-        "name": "testproject",
+        "project": "testproject",
         "path": "E:\\scrapy_webconfig"
     },
     "scrapyd": {
-        "host": "192.168.3.236",
+        "host": address,
         "port": 6800
     }
 }

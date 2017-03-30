@@ -56,9 +56,9 @@ def fileconfig(name_spider):
     try:
         conn = MySQLdb.connect(host=conf.get("host", "localhost"), port=conf.get("port", 3306),
                                user=conf.get("user", "root"), passwd=conf.get("passwd", "root"),
-                               charset=u"utf8", cursorclass=MySQLdb.cursors.DictCursor)
+                               db=conf.get("databases"), charset=u"utf8", cursorclass=MySQLdb.cursors.DictCursor)
         cur = conn.cursor()
-        cur.execute(u"SELECT * FROM {}.net_spider WHERE spider_name='{}'".format(conf.get("databases"), name_spider))
+        cur.execute(u"SELECT * FROM net_spider WHERE spider_name='{}'".format(name_spider))
         try:
             keywords = cur.fetchall()[0]
         except:
@@ -89,17 +89,17 @@ def loaditems():
 def loadMySQL(spider_type):
     conf = loadscrapyconf()['mysql']
     conn = MySQLdb.connect(host=conf.get("host", "localhost"), port=conf.get("port", 3306),
-                           user=conf.get("user", "root"), passwd=conf.get("passwd", "root"), charset="utf8")
+                           user=conf.get("user", "root"), passwd=conf.get("passwd", "root"),
+                           db=conf.get("databases"), charset="utf8")
     cur = conn.cursor()
-    cur.execute(u"SELECT id FROM {}.net_gendbtable WHERE name = '{}'".format(conf.get("databases"), spider_type))
+    cur.execute(u"SELECT id FROM net_gendbtable WHERE name = '{}'".format(spider_type))
     try:
         key = cur.fetchall()[0][0]
     except:
         raise logging.error(u"spider_type:{} 未找到,请检查爬虫类型!".format(spider_type))
     try:
         cur.execute(
-            u"SELECT name FROM {}.net_gendbtable_column WHERE gen_gendbtable_id = '{}'".format(conf.get("databases"),
-                                                                                               key))
+            u"SELECT name FROM net_gendbtable_column WHERE gen_gendbtable_id = '{}'".format(key))
     except MySQLdb.Error, e:
         raise logging.error(u"Mysql Error %d: %s" % (e.args[0], e.args[1]))
     key = cur.fetchall()

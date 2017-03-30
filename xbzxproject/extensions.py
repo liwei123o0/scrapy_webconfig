@@ -13,16 +13,20 @@
 from scrapy import signals
 import datetime
 import MySQLdb
-import uuid
+from xbzxproject.settings import BASECONFIG
+from xbzxproject.utils.loadconfig import loadscrapyconf
 
 
 class StatsPoster(object):
+    conf = loadscrapyconf()['mysql']
+
     def __init__(self, crawler):
         self.crawler = crawler
         self.stats = crawler.stats
         # 链接数据库
-        self.conn = MySQLdb.connect(host=u'192.168.10.156', user=u'root', passwd=u'root', db=u'DataCollect', port=3306,
-                                    charset=u"utf8")
+        self.conn = MySQLdb.connect(host=self.conf.get("host", "localhost"), port=self.conf.get("port", 3306),
+                                    user=self.conf.get("user", "root"), passwd=self.conf.get("passwd", "root"),
+                                    db=self.conf.get("databases"), charset=u"utf8")
         self.cur = self.conn.cursor()
         self.COLstr = u''  # 列的字段
         self.ROWstr = u''  # 行字段
@@ -37,17 +41,23 @@ class StatsPoster(object):
 
     def spider_opened(self, spider):
         self.stats.set_value('start_time', datetime.datetime.now())
-        if hasattr(spider, 'debug') and spider.debug:
+        if spider.debug:
             self.enabled = False
             return
         else:
             self.enabled = True
 
     def close_spider(self, spider, reason):
-
+        host_spider = BASECONFIG["scrapyd"]
+        project_spider = BASECONFIG["scrapy"]
+        self.cur.execute("SELECT id FROM net_spider WHERE spider_name ='{}'".format(spider.name_spider))
+        net_spider_id = self.cur.fetchall()[0][0]
         self.stats.set_value('finish_time', datetime.datetime.now(), spider=spider)
         self.stats.set_value('name_spider', spider.name_spider)
         self.stats.set_value('spider_jobid', spider.spider_jobid)
+        self.stats.set_value("project_spider", project_spider.get("project"))
+        self.stats.set_value("host_spider", host_spider.get("host"))
+        self.stats.set_value("net_spider_id", net_spider_id)
 
         dic = self.stats.get_stats()
         for key in dic.keys():
