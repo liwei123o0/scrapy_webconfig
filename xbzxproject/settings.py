@@ -74,7 +74,7 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 DUPEFILTER_CLASS = 'scrapyjs.SplashAwareDupeFilter'
-SPLASH_URL = 'http://192.168.10.26:5000/'
+SPLASH_URL = 'http://192.168.10.26:8050/'
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html

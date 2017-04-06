@@ -44,7 +44,7 @@ class loadSpider(CrawlSpider):
         else:
             self.proxy = True
 
-        self.tablename = spider_jobid
+        # self.tablename = spider_jobid
 
         self.start_urls = [self.conf.get("start_urls", "").replace("\r\n","")]
         # 判断是否翻页规则解析 (方法一)
