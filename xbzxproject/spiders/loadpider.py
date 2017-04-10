@@ -46,7 +46,7 @@ class loadSpider(CrawlSpider):
 
         # self.tablename = spider_jobid
 
-        self.start_urls = [self.conf.get("start_urls", "").replace("\r\n","")]
+        self.start_urls = self.conf.get("start_urls", "").replace("\r\n", "").split(',')
         # 判断是否翻页规则解析 (方法一)
         rules = json.loads(self.conf.get("rules"))
         if rules.get("rules", "") == "":
@@ -54,7 +54,6 @@ class loadSpider(CrawlSpider):
             return
         keys = len(rules.get("rules").keys())
         if keys == 1:
-            print rules.get("rules_listxpath", "")
             self.rules = [
                 Rule(LinkExtractor(restrict_xpaths="{}".format(rules.get("rules").get("rules_listxpath", ""))),
                      follow=False,

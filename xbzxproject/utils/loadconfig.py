@@ -115,4 +115,6 @@ def loadscrapyconf():
 
 
 if __name__ == "__main__":
+    conf = fileconfig('sina')
+    print conf.get("start_urls", "").replace("\r\n", "").split(',')
     pass
