@@ -55,17 +55,21 @@ class loadSpider(CrawlSpider):
         keys = len(rules.get("rules").keys())
         if keys == 1:
             self.rules = [
-                Rule(LinkExtractor(restrict_xpaths="{}".format(rules.get("rules").get("rules_listxpath", ""))),
-                     follow=False,
-                     callback="parse_item")
+                Rule(LinkExtractor(
+                    restrict_xpaths="{}".format(rules.get("rules").get("rules_listxpath", ""))),
+                    follow=False,
+                    callback="parse_item")
             ]
         elif keys == 2:
             self.rules = [
-                Rule(LinkExtractor(restrict_xpaths="{}".format(rules.get("rules").get("reles_pagexpath"))), follow=True,
-                     ),
-                Rule(LinkExtractor(restrict_xpaths="{}".format(rules.get("rules").get("rules_listxpath"))),
-                     follow=False,
-                     callback="parse_item")
+                Rule(LinkExtractor(
+                    restrict_xpaths="{}".format(rules.get("rules").get("reles_pagexpath"))),
+                    follow=True,
+                ),
+                Rule(LinkExtractor(
+                    restrict_xpaths="{}".format(rules.get("rules").get("rules_listxpath"))),
+                    follow=False,
+                    callback="parse_item")
             ]
 
     # 内容解析

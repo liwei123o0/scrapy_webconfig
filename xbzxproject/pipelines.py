@@ -56,8 +56,8 @@ class XbzxprojectPipeline(object):
             item[k] = re.sub(r"\xa5", "", item[k])
         try:
             # 判断字段是否存在
-            if 'crl_10416003' in item:
-                item['crl_10416003'] = date_parse.parse_date(item['crl_10416003'])
+            if 'pubtime' in item:
+                item['pubtime'] = date_parse.parse_date(item['pubtime'])
         except:
             logging.error(u"时间格式化错误!")
             return item
