@@ -134,7 +134,7 @@ BASECONFIG = {
         "path": "E:\\scrapy_webconfig"
     },
     "scrapyd": {
-        "host": address,
+        "host": "192.168.3.236",
         "port": 6800
     }
 }
