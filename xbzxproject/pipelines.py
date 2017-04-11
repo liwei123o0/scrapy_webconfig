@@ -61,20 +61,22 @@ class XbzxprojectPipeline(object):
         except:
             logging.error(u"时间格式化错误!")
             return item
-        print u"{:=^30}".format(self.cout)
         # 收集item字段名及值
         fields = []
         values = []
 
         # 显示采集字段及内容
         for k, v in item.iteritems():
-            print u"{:>13.13}:{}".format(k, v)
+            # print u"{:>13.13}:{}".format(k, v)
             # zmq 发送请求
             # self.socket.ZmqServerSend(u"{:>13.13}:{}".format(k, v))
             fields.append(k)
             values.append(v)
         # debug为true时,数据入库!
         if spider.debug:
+            print u"{:=^30}".format(self.cout)
+            for k, v in item.iteritems():
+                print u"{:>13.13}:{}".format(k, v)
             self.cur.execute(
                 u"SELECT gen_gendbtable_id FROM net_spider WHERE spider_name='{}';".format(spider.name_spider))
             gen_gendbtable_id = self.cur.fetchall()[0][0]
