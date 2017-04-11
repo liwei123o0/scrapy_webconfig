@@ -82,15 +82,15 @@ class loadSpider(CrawlSpider):
         l.add_value("url", response.url)
         l.add_value("spider_jobid", self.spider_jobid)
         # 加载动态库字段建立Field,xpath规则 (方法一)
-        for k in loadMySQL(self.conf.get("spider_type")):
+        for k in loadMySQL(self.conf.get("spider_name")):
             if fields.get("fields", "") == "":
                 logging.error(u"内容解析未得到!!!")
                 return l.load_item()
-            if fields.get("fields").get(k[0]) != None:
-                item.fields[k[0]] = Field()
-                if fields.get("fields").get(k[0]).keys()[0] == "xpath":
-                    l.add_xpath(k[0], "{}".format(fields.get("fields").get(k[0]).get("xpath")),
+            if fields.get("fields").get(k[2]) != None:
+                item.fields[k[2]] = Field()
+                if fields.get("fields").get(k[2]).keys()[0] == "xpath":
+                    l.add_xpath(k[2], "{}".format(fields.get("fields").get(k[2]).get("xpath")),
                                 MapCompose(unicode.strip))
-                elif fields.get("fields").get(k[0]).keys()[0] == "value":
-                    l.add_value(k[0], "{}".format(fields.get("fields").get(k[0]).get("value")))
+                elif fields.get("fields").get(k[2]).keys()[0] == "value":
+                    l.add_value(k[2], "{}".format(fields.get("fields").get(k[2]).get("value")))
         return l.load_item()

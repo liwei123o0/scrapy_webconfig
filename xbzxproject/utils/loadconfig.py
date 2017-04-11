@@ -86,20 +86,20 @@ def loaditems():
 
 
 # 读取自动建库字段
-def loadMySQL(spider_type):
+def loadMySQL(spider_name):
     conf = loadscrapyconf()['mysql']
     conn = MySQLdb.connect(host=conf.get("host", "localhost"), port=conf.get("port", 3306),
                            user=conf.get("user", "root"), passwd=conf.get("passwd", "root"),
                            db=conf.get("databases"), charset="utf8")
     cur = conn.cursor()
-    cur.execute(u"SELECT id FROM net_gendbtable WHERE name = '{}'".format(spider_type))
+    cur.execute(u"SELECT gen_gendbtable_id FROM net_spider WHERE spider_name='{}'".format(spider_name))
     try:
         key = cur.fetchall()[0][0]
     except:
-        raise logging.error(u"spider_type:{} 未找到,请检查爬虫类型!".format(spider_type))
+        raise logging.error(u"spider_type:{} 未找到,请检查爬虫类型!".format(spider_name))
     try:
         cur.execute(
-            u"SELECT name FROM net_gendbtable_column WHERE gen_gendbtable_id = '{}'".format(key))
+            u"SELECT * FROM net_gendbtable_column WHERE gen_gendbtable_id = '{}'".format(key))
     except MySQLdb.Error, e:
         raise logging.error(u"Mysql Error %d: %s" % (e.args[0], e.args[1]))
     key = cur.fetchall()
@@ -115,6 +115,10 @@ def loadscrapyconf():
 
 
 if __name__ == "__main__":
-    conf = fileconfig('sina')
-    print conf.get("start_urls", "").replace("\r\n", "").split(',')
-    pass
+    conf = fileconfig('51job')
+    fields = json.loads(conf.get("fields"))
+    print fields
+    for k in loadMySQL("51job"):
+        print k[2]
+        if fields.get("fields").get(k[2]) != None:
+            pass
