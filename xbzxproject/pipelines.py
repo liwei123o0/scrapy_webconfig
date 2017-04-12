@@ -94,17 +94,15 @@ class XbzxprojectPipeline(object):
             data = ''
             for key in keys:
                 kcout += 1
-                comments = datanames.get(key)
+                comments = datanames.get(key, None)
                 if comments is None:
                     continue
-                if kcout == len(keys):
-                    data += '"%s":"%s"' % (comments, item[key])
-                else:
-                    data += '"%s":"%s",' % (comments, item[key])
+                data += '"%s":"%s"' % (comments, item[key]) + ","
             data = "{" + data + "}"
+            data = data.replace(",}", "}")
             try:
                 self.cur.execute(
-                # print(
+                    # print(
                     u"INSERT INTO net_spider_temp(url,name_spider,spider_data) VALUES('%s','%s','%s');" % (item['url'],
                                                                                                            spider.name_spider,
                                                                                                            data))
