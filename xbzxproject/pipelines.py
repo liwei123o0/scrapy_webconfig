@@ -16,7 +16,7 @@ import logging
 from xbzxproject.utils import date_parse
 from xbzxproject.utils.zmqserver import ServerZmq
 from xbzxproject.utils.loadconfig import loadscrapyconf
-import re, pymongo
+import re, pymongo, json
 
 
 # mysql入库Pipeline
@@ -76,14 +76,19 @@ class XbzxprojectPipeline(object):
         if spider.debug:
             print u"{:=^30}".format(self.cout)
             for k, v in item.iteritems():
-                print u"{:>13.13}:{}".format(k, v)
+                try:
+                    print u"{:>13.13}:{}".format(k, v)
+                except:
+                    pass
             self.cur.execute(
                 u"SELECT gen_gendbtable_id FROM net_spider WHERE spider_name='{}';".format(spider.name_spider))
             gen_gendbtable_id = self.cur.fetchall()[0][0]
             self.cur.execute(
                 u"SELECT name,comments FROM  net_gendbtable_column WHERE gen_gendbtable_id='{}';".format(
                     gen_gendbtable_id))
+            # 获取字段对照名
             datanames = dict(self.cur.fetchall())
+            # 获取item的keys值
             keys = item.keys()
             kcout = 0
             data = ''
@@ -93,16 +98,16 @@ class XbzxprojectPipeline(object):
                 if comments is None:
                     continue
                 if kcout == len(keys):
-                    data += '"%s":"%s"' % (comments, item[key].replace("'", ""))
+                    data += '"%s":"%s"' % (comments, item[key])
                 else:
-                    data += '"%s":"%s",' % (comments, item[key].replace("'", ""))
+                    data += '"%s":"%s",' % (comments, item[key])
             data = "{" + data + "}"
             try:
                 self.cur.execute(
-                    # print(
+                # print(
                     u"INSERT INTO net_spider_temp(url,name_spider,spider_data) VALUES('%s','%s','%s');" % (item['url'],
                                                                                                            spider.name_spider,
-                                                                                                           str(data)))
+                                                                                                           data))
                 self.conn.commit()
             except MySQLdb.Error, e:
                 logging.error(u"Mysql Error %d: %s" % (e.args[0], e.args[1]))

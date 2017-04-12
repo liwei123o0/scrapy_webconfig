@@ -115,10 +115,11 @@ def loadscrapyconf():
 
 
 if __name__ == "__main__":
-    conf = fileconfig('51job')
-    fields = json.loads(conf.get("fields"))
-    print fields
-    for k in loadMySQL("51job"):
-        print k[2]
-        if fields.get("fields").get(k[2]) != None:
-            pass
+    # conf = fileconfig('51job')
+    # fields = json.loads(conf.get("fields"))
+    # print fields
+    # for k in loadMySQL("51job"):
+    #     print k[2]
+    #     if fields.get("fields").get(k[2]) != None:
+    #         pass
+    print u"\u53d1\u5e03\u65f6\u95f4"
