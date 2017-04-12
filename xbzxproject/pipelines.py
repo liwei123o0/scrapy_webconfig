@@ -102,7 +102,6 @@ class XbzxprojectPipeline(object):
             data = data.replace(",}", "}")
             try:
                 self.cur.execute(
-                    # print(
                     u"INSERT INTO net_spider_temp(url,name_spider,spider_data) VALUES('%s','%s','%s');" % (item['url'],
                                                                                                            spider.name_spider,
                                                                                                            data))
