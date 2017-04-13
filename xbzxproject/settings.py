@@ -130,8 +130,7 @@ BASECONFIG = {
         "passwd": "root"
     },
     "scrapy": {
-        "project": "testproject",
-        "path": "E:\\scrapy_webconfig"
+        "project": "xbzxproject"
     },
     "scrapyd": {
         "host": "192.168.3.236",
