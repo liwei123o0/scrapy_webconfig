@@ -110,7 +110,7 @@ def qxdata(tablename1, tablename2, days):
     cur.execute(u"DELETE FROM temp.{} WHERE ISNULL(ztsbm)".format(tablename2))
     conn.commit()
 
-    logging.warning(u"将清洗完的完整数据插入到清洗表中")
+    logging.warning(u"将清洗完的完整数据插入到清洗表:{}_qx、{}_qx 中".format(tablename1,tablename2))
     cur.execute(
         u"INSERT INTO temp.{}_qx SELECT * FROM temp.{};".format(tablename1, tablename1))
     cur.execute(
@@ -122,7 +122,7 @@ def qxdata(tablename1, tablename2, days):
 
 if __name__ == '__main__':
     # 参数为表明
-    #2017-2-03
+    #2017-4-28
     logging.warning(u"中标公司信息清洗...")
-    zbxx(database='yqapp', tablename='zbxx', days=15)
-    qxdata(tablename1='zbxx', tablename2='news', days=15)
+    zbxx(database='yqapp', tablename='zbxx', days=21)
+    qxdata(tablename1='zbxx', tablename2='news', days=21)

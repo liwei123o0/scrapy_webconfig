@@ -16,7 +16,7 @@ import logging
 from xbzxproject.utils import date_parse
 from xbzxproject.utils.zmqserver import ServerZmq
 from xbzxproject.utils.loadconfig import loadscrapyconf
-import re, pymongo, json
+import re, pymongo, json, datetime
 
 
 # mysql入库Pipeline
@@ -118,12 +118,20 @@ class XbzxprojectPipeline(object):
                 if TableName:
                     TableName = TableName[0][0]
                     # 根据 item 字段插入数据
+                    sql = u"INSERT INTO {}({}) VALUES({}) ON DUPLICATE KEY UPDATE ".format(TableName,
+                                                                                           u",".join(fields), u','.join(
+                            [u'%s'] * len(fields))),
+                    sql = str(sql[0])
+                    # 插入数据如果数据重复则更新已有数据
+                    for f in fields:
+                        sql += u'{}=VALUES({}),'.format(f, f)
+                    sql = sql[:-1] + u';'
+                    self.cur.execute(sql, values)
                     self.cur.execute(
-                        u"INSERT INTO {}({}) VALUES({});".format(TableName,
-                                                                 u",".join(fields), u','.join([u'%s'] * len(fields))),
-                        values)
+                        u"UPDATE {} SET update_date='{}' WHERE url='{}'".format(TableName, datetime.datetime.now(),
+                                                                                item['url']))
                     self.conn.commit()
-                    logging.info(u"数据插入成功!")
+                    logging.info(u"数据插入/更新成功!")
                 else:
                     logging.error(u"未对该爬虫创建数据库表!")
             except MySQLdb.Error, e:
