@@ -113,6 +113,16 @@ def loadscrapyconf():
     from xbzxproject.settings import BASECONFIG
     return BASECONFIG
 
+# 获取关键字
+def loadkeywords():
+    conf = loadscrapyconf()['mysql']
+    conn = MySQLdb.connect(host=conf.get("host", "localhost"), port=conf.get("port", 3306),
+                           user=conf.get("user", "root"), passwd=conf.get("passwd", "root"),
+                           db=conf.get("databases"), charset="utf8")
+    cur = conn.cursor()
+    cur.execute("SELECT keyword_whodo,keyword_event,keyword_dowhat FROM  net_spider_keyword;")
+    keywords = cur.fetchall()
+    return keywords
 
 if __name__ == "__main__":
     conf = fileconfig('sina')
